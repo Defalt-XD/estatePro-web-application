@@ -1,0 +1,3 @@
+{'name': 'shayan adill adill', 'email': 'umafia507@gmail.com', 'phone': '03081564492', 'property_id': ''}
+{'name': 'shayan adill adill', 'email': 'umafia507@gmail.com', 'phone': '03081564492', 'property_id': ''}
+{'name': 'jj', 'email': 'j@hmao', 'phone': 'jj', 'property_id': ''}

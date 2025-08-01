@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Estate<span>Pro</span></div>
+        <div class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="{{ url_for('buy') }}">Buy</a>
+            <a href="{{ url_for('rent') }}">Rent</a>
+            <a href="{{ url_for('sell') }}">Sell</a>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        </div>
+        <div class="user-actions">
+            <button class="notifications"><i class="fas fa-bell"></i></button>
+            <div class="dropdown notifications-dropdown" style="display:none;">
+                <div class="dropdown-content">
+                    <p>No new notifications.</p>
+                </div>
+            </div>
+            <button class="messages"><i class="fas fa-envelope"></i></button>
+            <div class="dropdown messages-dropdown" style="display:none;">
+                <div class="dropdown-content">
+                    <p>No new messages.</p>
+                </div>
+            </div>
+            <button class="profile"><i class="fas fa-user"></i></button>
+            <div class="dropdown profile-dropdown" style="display:none; min-width:160px;">
+                <div class="dropdown-content">
+                    {% if session.get('user_name') %}
+                        <span style="font-weight:bold;">{{ session['user_name'] }}</span><br>
+                        <span style="font-size:12px; color:#888;">{{ session['user_email'] }}</span>
+                        <hr>
+                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        {% if not session.get('is_premium') %}
+                        <a href="{{ url_for('get_premium') }}">Get Premium</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Login</a>
+                        <a href="{{ url_for('register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="search-section">
+            <div class="search-container">
+                <h1>Find Your Dream Property</h1>
+                <div class="search-box">
+                    <input id="search-location" type="text" placeholder="Location">
+                    <select id="search-type">
+                        <option value="">Property Type</option>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="Town house">townhouse</option>
+                    </select>
+                    <select id="search-price">
+                        <option value="">Price Range</option>
+                        <option value="0-100k">0 - 100,000</option>
+                        <option value="100k-300k">100,000 - 300,000</option>
+                        <option value="300k+">300,000+</option>
+                    </select>
+                    <button class="search-btn" id="search-btn">Search</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="map-section">
+            <div id="map"></div>
+            <div class="property-list">
+                <h2>Featured Properties</h2>
+                <div class="property-cards">
+                   
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <div class="tool-card" id="investment-calculator-tool" style="cursor:pointer;">
+                <i class="fas fa-calculator"></i>
+                <h3>Investment Calculator</h3>
+                <p>Calculate potential ROI</p>
+            </div>
+            <div class="tool-card" id="list-property-tool" style="cursor:pointer;">
+                <i class="fas fa-home"></i>
+                <h3>List Property</h3>
+                <p>Sell or rent your property</p>
+            </div>
+            <div class="tool-card">
+                <i class="fas fa-heart"></i>
+                <h3>Save Searches</h3>
+                <p>Quick access to favorites</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted estatepro platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>support@estatepro.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+    document.getElementById('search-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const location = document.getElementById('search-location').value.trim();
+        const type = document.getElementById('search-type').value;
+        const price = document.getElementById('search-price').value;
+        fetch(`/search?location=${encodeURIComponent(location)}&type=${encodeURIComponent(type)}&price=${encodeURIComponent(price)}`)
+            .then(res => res.json())
+            .then(data => {
+                const cards = document.querySelector('.property-cards');
+                cards.innerHTML = '';
+                if (data.length === 0) {
+                    cards.innerHTML = '<p>No properties found.</p>';
+                } else {
+                    data.forEach(property => {
+                        const div = document.createElement('div');
+                        div.className = 'property-card';
+                        let imgSrc = (property.images && property.images.length > 0) ? `/static/${property.images[0]}` : '/static/images/image4.jpeg';
+                        div.innerHTML = `
+                            <img src="${imgSrc}" alt="Property Image" style="width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                            <h4 class="property-address">${property.address}, ${property.city}</h4>
+                            <p class="property-type">Type: ${property.type}</p>
+                            <p class="property-price">Price: $${property.price}</p>
+                            <p>Bedrooms: ${property.bedrooms}, Bathrooms: ${property.bathrooms}</p>
+                            <button class="favorite-btn"><i class="fas fa-heart"></i> Add to Favorites</button>
+                        `;
+                        cards.appendChild(div);
+                    });
+                    // Attach favorite button logic after rendering
+                    attachFavoriteButtons();
+                }
+            });
+    });
+
+    // Add click event for investment calculator tool
+    document.getElementById('investment-calculator-tool').addEventListener('click', function() {
+        window.location.href = "{{ url_for('invest_calculator') }}";
+    });
+    // Add click event for list property tool
+    document.getElementById('list-property-tool').addEventListener('click', function() {
+        window.location.href = "{{ url_for('sell') }}";
+    });
+
+    // Favorite Properties Logic
+function addToFavorites(property) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    // Avoid duplicates by checking address/type/price
+    if (!favorites.some(fav => fav.address === property.address && fav.type === property.type && fav.price === property.price)) {
+        favorites.push(property);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        alert('Property added to favorites!');
+    } else {
+        alert('Property is already in your favorites.');
+    }
+}
+
+// Attach favorite button logic to property cards after rendering
+function attachFavoriteButtons() {
+    document.querySelectorAll('.property-card .favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.property-card');
+            const property = {
+                address: card.querySelector('.property-address')?.textContent || '',
+                type: card.querySelector('.property-type')?.textContent || '',
+                price: card.querySelector('.property-price')?.textContent.replace(/[^\d.]/g, '') || '',
+                img: card.querySelector('img')?.src || ''
+            };
+            addToFavorites(property);
+        });
+    });
+}
+
+// After rendering property cards, call attachFavoriteButtons();
+// Example: renderProperties() { ... attachFavoriteButtons(); }
+
+// Navbar user-actions functionality
+// Notifications
+const notifBtn = document.querySelector('.notifications');
+notifBtn.addEventListener('click', function(e) {
+    window.location.href = "{{ url_for('dashboard') }}";
+});
+// Messages
+const msgBtn = document.querySelector('.messages');
+msgBtn.addEventListener('click', function(e) {
+    window.location.href = "{{ url_for('dashboard') }}";
+});
+// Profile dropdown
+const profileBtn = document.querySelector('.profile');
+profileBtn.addEventListener('click', function(e) {
+    window.location.href = "{{ url_for('dashboard') }}";
+});
+    </script>
+</body>
+</html>

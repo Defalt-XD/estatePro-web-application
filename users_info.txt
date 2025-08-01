@@ -1,0 +1,8 @@
+{'name': 'sanwal ', 'email': 'mmumafia507@gmail.com', 'password': 'admin', 'is_premium': False}
+{'name': 'sawera', 'email': 'umafia507@gmail.com', 'password': 'sawera', 'is_premium': True}
+{'name': 'tanzeeel ', 'email': 'tanzeel@gmail.com', 'password': 'tanzeel', 'is_premium': True}
+{'name': 'Sanwal bilal ', 'email': 'sanwalsangwall0077@gmail.com', 'password': 'sanwal', 'is_premium': True}
+{'name': 'khan', 'email': 'khan@gmail.com', 'password': 'khan', 'is_premium': True}
+{'name': 'sawera', 'email': 'sawer2@gmail.com', 'password': 'sawera2', 'is_premium': True}
+{'name': 'Sanwal Bilal2', 'email': 'umafia500@gmail.com', 'password': 'sanwal', 'is_premium': True}
+{'name': 'Sanwal bilal', 'email': 'sanwal@gmail.com', 'password': 'sanwal00', 'is_premium': True}

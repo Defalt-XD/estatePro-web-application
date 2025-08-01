@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details | EstatePro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/property_details.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <!-- Same navbar as index.html -->
+        <div class="logo">Estate<span>Pro</span></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#" class="active">Details</a>
+        </div>
+        <div class="user-actions">
+            <button class="notifications"><i class="fas fa-bell"></i></button>
+            <button class="messages"><i class="fas fa-envelope"></i></button>
+            <button class="profile"><i class="fas fa-user"></i></button>
+        </div>
+    </nav>
+
+    <main class="property-details-main">
+        <div class="property-header">
+            <div class="property-title">
+                <h1>Luxury Waterfront Villa</h1>
+                <p class="location"><i class="fas fa-map-marker-alt"></i> 123 Ocean Drive, Miami Beach, FL</p>
+            </div>
+            <div class="property-price">
+                <h2>$2,500,000</h2>
+                <div class="price-details">
+                    <span>$833/sq ft</span>
+                    <span>Listed 2 days ago</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="property-gallery">
+            <div class="main-image">
+                <img src="{{ url_for('static', filename='images/detail img 1.jpg') }}" alt="Property Main View">
+            </div>
+            <div class="thumbnail-grid">
+                <img src="{{ url_for('static', filename='images/detail img 2.jpg') }}" alt="Property View 1">
+                <img src="{{ url_for('static', filename='images/detail img 3.jpg') }}" alt="Property View 2">
+                <img src="{{ url_for('static', filename='images/detail img 3.jpg') }}" alt="Property View 3">
+                <button class="view-all-photos">View All Photos (25)</button>
+            </div>
+        </div>
+
+        <div class="property-content">
+            <div class="main-info">
+                <div class="key-features">
+                    <div class="feature">
+                        <i class="fas fa-bed"></i>
+                        <span>4 Bedrooms</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-bath"></i>
+                        <span>3.5 Baths</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-ruler-combined"></i>
+                        <span>3,000 sq ft</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-car"></i>
+                        <span>2 Garage Spaces</span>
+                    </div>
+                </div>
+
+                <div class="property-description">
+                    <h3>Description</h3>
+                    <p>Stunning waterfront villa with breathtaking ocean views. This luxurious property features high-end finishes, an open concept living area, and a private pool. Perfect for those seeking the ultimate Miami lifestyle.</p>
+                    <div class="amenities">
+                        <h4>Amenities</h4>
+                        <ul>
+                            <li><i class="fas fa-swimming-pool"></i> Private Pool</li>
+                            <li><i class="fas fa-wind"></i> Central AC</li>
+                            <li><i class="fas fa-utensils"></i> Gourmet Kitchen</li>
+                            <li><i class="fas fa-door-open"></i> Walk-in Closets</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="property-sidebar">
+                <div class="agent-card">
+                    <img src="{{ url_for('static', filename='images/agent avatar.jpg') }}" alt="Agent Name" class="agent-photo">
+                    <h3>Khurram Shahzad</h3>
+                    <p>Luxury Property Specialist</p>
+                    <div class="agent-stats">
+                        <span>4.9 ★</span>
+                        <span>150+ Sales</span>
+                    </div>
+                    <button class="contact-agent">Contact Agent</button>
+                    <!-- Chatbox (hidden by default) -->
+                    <div id="chatbox" class="chatbox" style="display:none;">
+                        <div class="chatbox-header">
+                            <span>Chat with Agent</span>
+                            <button id="close-chatbox" style="float:right;">&times;</button>
+                        </div>
+                        <div class="chatbox-messages" id="chatbox-messages" style="height:150px; overflow-y:auto; background:#f9f9f9; margin:10px 0; padding:5px;"></div>
+                        <form id="chatbox-form" style="display:flex; gap:5px;">
+                            <input type="text" id="chatbox-input" placeholder="Type your message..." style="flex:1; padding:5px;">
+                            <button type="submit">Send</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="schedule-tour"><i class="fas fa-calendar"></i> Schedule Tour</button>
+                    <button class="make-offer"><i class="fas fa-file-signature"></i> Make an Offer</button>
+                    <button class="save-property"><i class="far fa-heart"></i> Save Property</button>
+                </div>
+
+                <div class="mortgage-calculator">
+                    <h3>Mortgage Calculator</h3>
+                    <div class="calculator-inputs">
+                        <div class="input-group">
+                            <label>Down Payment</label>
+                            <input type="text" value="$500,000">
+                        </div>
+                        <div class="input-group">
+                            <label>Loan Term</label>
+                            <select>
+                                <option>30 Years</option>
+                                <option>15 Years</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Interest Rate</label>
+                            <input type="text" value="3.5%">
+                        </div>
+                    </div>
+                    <div class="monthly-payment">
+                        <h4>Estimated Monthly Payment</h4>
+                        <p class="amount">$8,925</p>
+                    </div>
+                    <button class="calculate-btn">Recalculate</button>
+                </div>
+            </aside>
+        </div>
+
+        <section class="nearby-properties">
+            <h2>Similar Properties Nearby</h2>
+            <div class="property-carousel">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted  estate platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>support@estatepro.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/property_details.js') }}"></script>
+</body>
+</html>

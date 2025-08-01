@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Property | RealEstatePro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sell.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Estate<span>Pro</span></div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('buy') }}">Buy</a>
+            <a href="{{ url_for('sell') }}" class="active">Sell</a>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        </div>
+        <div class="user-actions">
+            <button class="notifications"><i class="fas fa-bell"></i></button>
+            <button class="messages"><i class="fas fa-envelope"></i></button>
+            <button class="profile"><i class="fas fa-user"></i></button>
+        </div>
+    </nav>
+
+    <main class="sell-main">
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Sell Your Property with Confidence</h1>
+                <p>Get the best value for your property with our expert guidance and market insights</p>
+                <div class="hero-cta">
+                    <button class="list-property-btn">List Your Property</button>
+                    <button class="value-estimate-btn">Get Value Estimate</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="selling-steps">
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>List Your Property</h3>
+                    <p>Create a detailed listing with photos, features, and pricing</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>Professional Photos</h3>
+                    <p>Get professional photography services for your property</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Connect with Buyers</h3>
+                    <p>Reach potential buyers and schedule viewings</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Close the Deal</h3>
+                    <p>Get support through negotiations and closing</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="property-form-section" id="listPropertyForm">
+            <h2>List Your Property</h2>
+            <form id="property-listing-form" class="property-listing-form" method="POST" enctype="multipart/form-data" action="{{ url_for('sell') }}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <select id="type" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="house">House</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="condo">Condo</option>
+                            <option value="townhouse">Townhouse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input id="price" name="price" type="number" placeholder="Enter asking price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bedrooms</label>
+                        <input id="bedrooms" name="bedrooms" type="number" placeholder="Number of bedrooms" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bathrooms</label>
+                        <input id="bathrooms" name="bathrooms" type="number" placeholder="Number of bathrooms" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Address</label>
+                        <input id="address" name="address" type="text" placeholder="Enter property address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input id="city" name="city" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>State</label>
+                        <input id="state" name="state" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ZIP Code</label>
+                        <input id="zip_code" name="zip_code" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Square Feet</label>
+                        <input id="square_feet" name="square_feet" type="number" placeholder="Property size" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Year Built</label>
+                        <input id="year_built" name="year_built" type="number" placeholder="Year of construction" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Property Features</h3>
+                    <div class="features-grid">
+                        <label class="checkbox-label">
+                            <input id="feature_garage" name="features" type="checkbox" value="Garage"> Garage
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="feature_pool" name="features" type="checkbox" value="Pool"> Pool
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="feature_garden" name="features" type="checkbox" value="Garden"> Garden
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="feature_ac" name="features" type="checkbox" value="Air Conditioning"> Air Conditioning
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="feature_heating" name="features" type="checkbox" value="Heating"> Heating
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="feature_security" name="features" type="checkbox" value="Security System"> Security System
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Property Description</h3>
+                    <textarea id="description" name="description" placeholder="Describe your property..." rows="5" required></textarea>
+                </div>
+
+                <div class="form-section">
+    <h3>Upload Photos</h3>
+    <div class="photo-upload">
+        <div class="upload-box">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to select photos</p>
+            <input id="photos" name="photos" type="file" multiple accept="image/*">
+        </div>
+        <!-- No JS preview, just simple upload -->
+    </div>
+    <div id="image-selected-msg" style="color:green; margin-top:8px;"></div>
+</div>
+
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    <div class="contact-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input id="contact_name" name="name" type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input id="contact_email" name="email" type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input id="contact_phone" name="phone" type="tel" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-listing-btn">Submit Listing</button>
+                    <button type="button" class="save-draft-btn">Save as Draft</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="market-insights">
+            <h2>Market Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h3>Property Values</h3>
+                    <div class="chart-container">
+                        <canvas id="propertyValuesChart"></canvas>
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <h3>Market Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="marketTrendsChart"></canvas>
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <h3>Recent Sales</h3>
+                    <ul class="recent-sales-list">
+                        <!-- Sales data will be dynamically added here -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="seller-resources">
+            <h2>Seller Resources</h2>
+            <div class="resources-grid">
+                <article class="resource-card">
+                    <img src="{{ url_for('static', filename='images/image7.jpeg') }}" alt="Pricing Guide">
+                    <div class="resource-content">
+                        <h3>Pricing Strategy Guide</h3>
+                        <p>Learn how to price your property competitively</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+                <article class="resource-card">
+                    <img src="{{ url_for('static', filename='images/image8.jpeg') }}" alt="Home Staging">
+                    <div class="resource-content">
+                        <h3>Home Staging Tips</h3>
+                        <p>Prepare your property for successful viewings</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+                <article class="resource-card">
+                    <img src="{{ url_for('static', filename='images/image8.jpeg') }}" alt="Selling Guide">
+                    <div class="resource-content">
+                        <h3>Selling Process Guide</h3>
+                        <p>Understanding the selling process step by step</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted  estate platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>support@estatepro.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/sell.js') }}"></script>
+    <script>
+        // Make the upload box clickable to open the file dialog
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBox = document.querySelector('.upload-box');
+            const fileInput = document.getElementById('photos');
+            if (uploadBox && fileInput) {
+                uploadBox.addEventListener('click', function() {
+                    fileInput.click();
+                });
+                // Show message when image(s) selected
+                fileInput.addEventListener('change', function() {
+                    let msg = document.getElementById('image-selected-msg');
+                    if (!msg) {
+                        msg = document.createElement('div');
+                        msg.id = 'image-selected-msg';
+                        msg.style.color = 'green';
+                        msg.style.marginTop = '8px';
+                        uploadBox.appendChild(msg);
+                    }
+                    if (fileInput.files.length > 0) {
+                        msg.textContent = fileInput.files.length === 1 ? '1 image selected' : `${fileInput.files.length} images selected`;
+                    } else {
+                        msg.textContent = '';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

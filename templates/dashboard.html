@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | EstatePro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Estate<span>Pro</span></div>
+        <div class="nav-links">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{ url_for('static', filename='css/styles.css') }}" class="active">Dashboard</a>
+        </div>
+        <div class="user-actions">
+            <button class="notifications"><i class="fas fa-bell"></i></button>
+            <button class="messages"><i class="fas fa-envelope"></i></button>
+            <button class="profile"><i class="fas fa-user"></i></button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='images/avatar.webp') }}" alt="User Avatar">
+                <h3>{{ user_name }}</h3>
+                <p>{{ user_email }}</p>
+                {% if not is_premium %}
+                <a href="{{ url_for('get_premium') }}" class="btn btn-warning" style="background:#ffc107; color:#222; padding:0.7rem 1.5rem; border-radius:6px; font-weight:600; text-decoration:none; display:inline-block; margin-top:1rem;">Get Premium</a>
+                {% else %}
+                <span style="color:#28a745; font-weight:600; display:block; margin-top:1rem;">Premium Member</span>
+                {% endif %}
+            </div>
+            <nav class="dashboard-nav">
+                <a href="#overview" class="active"><i class="fas fa-home"></i> Overview</a>
+                <a href="#properties"><i class="fas fa-building"></i> My Properties</a>
+                <a href="#favorites"><i class="fas fa-heart"></i> Favorites</a>
+                <a href="#messages"><i class="fas fa-envelope"></i> Messages</a>
+                <a href="#appointments"><i class="fas fa-calendar"></i> Appointments</a>
+                <a href="#documents"><i class="fas fa-file"></i> Documents</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <section id="overview" class="dashboard-section active">
+                <h2>Dashboard Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-home"></i></div>
+                        <div class="stat-content">
+                            <h3>Properties Listed</h3>
+                            <p id="stat-properties-listed">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                        <div class="stat-content">
+                            <h3>Saved Properties</h3>
+                            <p id="stat-saved-properties">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                        <div class="stat-content">
+                            <h3>Property Views</h3>
+                            <p>0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-content">
+                            <h3>New Messages</h3>
+                            <p id="stat-new-messages">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-widgets">
+                    <div class="widget recent-activity">
+                        <h3>Recent Activity</h3>
+                        <ul class="activity-list">
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <p>Property viewed: Modern Apartment</p>
+                                    <span>2 hours ago</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-comment"></i>
+                                <div>
+                                    <p>New message from Agent Smith</p>
+                                    <span>5 hours ago</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-heart"></i>
+                                <div>
+                                    <p>Saved: Luxury Villa</p>
+                                    <span>1 day ago</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="widget upcoming-appointments">
+                        <h3>Upcoming Appointments</h3>
+                        <ul class="appointment-list">
+                            <li>
+                                <div class="appointment-date">
+                                    <span class="day">23</span>
+                                    <span class="month">Jan</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <h4>Property Viewing</h4>
+                                    <p>123 Ocean Drive, 2:00 PM</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="appointment-date">
+                                    <span class="day">25</span>
+                                    <span class="month">Jan</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <h4>Agent Meeting</h4>
+                                    <p>Virtual Meeting, 11:00 AM</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="property-analytics">
+                    <h3>Property Analytics</h3>
+                    <div class="analytics-chart">
+                        <!-- Chart will be rendered here by JavaScript -->
+                        <canvas id="propertyViewsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="properties" class="dashboard-section">
+                <h2>My Properties</h2>
+                <div class="property-controls">
+                    <button class="add-property-btn"><i class="fas fa-plus"></i> Add New Property</button>
+                    <div class="property-filters">
+                        <select>
+                            <option>All Properties</option>
+                            <option>For Sale</option>
+                            <option>For Rent</option>
+                        </select>
+                        <select>
+                            <option>Sort by: Newest</option>
+                            <option>Sort by: Price</option>
+                            <option>Sort by: Views</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="property-grid">
+                    <!-- Property cards will be dynamically added here -->
+                </div>
+            </section>
+
+            <section id="favorites" class="dashboard-section">
+                <h2>Favorite Properties</h2>
+                <div class="favorites-grid">
+                    <!-- Favorite property cards will be dynamically added here -->
+                </div>
+            </section>
+
+            <section id="messages" class="dashboard-section">
+                <h2>Messages</h2>
+                <div class="messages-container">
+                    <div class="chat-list">
+                        <!-- Chat contacts will be dynamically added here -->
+                    </div>
+                    <div class="chat-window">
+                        <!-- Chat messages will be dynamically added here -->
+                        <div class="email-messages" style="margin-bottom:2rem;">
+                            <h3 style="margin-bottom:0.5rem; color:#007bff;"><i class="fas fa-envelope"></i> Email Inbox</h3>
+                            <div id="email-list" style="background:#f7f8fa; padding:1rem 1.5rem; border-radius:8px; color:#333; min-height:80px;">
+                                <span>Loading emails...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="appointments" class="dashboard-section">
+                <h2>Appointments</h2>
+                <div class="calendar-container">
+                    <ul class="appointment-list">
+                        <!-- Appointments will be rendered here by JS -->
+                    </ul>
+                </div>
+            </section>
+
+            <section id="documents" class="dashboard-section">
+                <h2>Documents</h2>
+                <div class="documents-grid">
+                    <!-- Document cards will be dynamically added here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    // Sidebar navigation
+    document.querySelectorAll('.dashboard-nav a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.dashboard-nav a').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
+            const id = this.getAttribute('href').replace('#', '');
+            document.getElementById(id).classList.add('active');
+        });
+    });
+
+    // Fetch properties from backend for My Properties
+    function fetchMyProperties() {
+        fetch('/dashboard_properties?type=my')
+            .then(res => res.json())
+            .then(data => {
+                renderMyProperties(data);
+            });
+    }
+    // Fetch favorites from localStorage instead of backend
+    function fetchFavorites() {
+        renderFavorites();
+    }
+    // Render My Properties (accepts data)
+    function renderMyProperties(props = []) {
+        const grid = document.querySelector('#properties .property-grid');
+        grid.innerHTML = '';
+        props.forEach(prop => {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.innerHTML = `
+                <img src="${prop.img || '/static/images/image4.jpeg'}" alt="Property" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">
+                <h4>${prop.title}</h4>
+                <p>Type: ${prop.type}</p>
+                <p>Price: $${prop.price}</p>
+                <span class="status" style="color:#007bff; font-size:0.9em;">${prop.status || ''}</span>
+                <button class="delete-btn" style="margin-top:8px; background:#dc3545; color:#fff;">Delete</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+    // Render Favorites (accepts data)
+    function renderFavorites(props) {
+        // If no props provided, try to load from localStorage
+        if (!props || !props.length) {
+            try {
+                props = JSON.parse(localStorage.getItem('favorites') || '[]');
+            } catch (e) { props = []; }
+        }
+        const grid = document.querySelector('#favorites .favorites-grid');
+        grid.innerHTML = '';
+        if (!props.length) {
+            grid.innerHTML = '<p style="color:#888;">No favorite properties yet.</p>';
+            return;
+        }
+        props.forEach(function(prop) {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.innerHTML = `
+                <img src="${prop.img || '/static/images/image4.jpeg'}" alt="Property" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">
+                <h4>${prop.address}</h4>
+                <p>Type: ${prop.type}</p>
+                <p>Price: $${prop.price}</p>
+                <button class="remove-fav-btn" style="margin-top:8px; background:#dc3545; color:#fff;">Remove</button>
+            `;
+            // Remove from favorites logic
+            card.querySelector('.remove-fav-btn').addEventListener('click', function() {
+                let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                favorites = favorites.filter(function(fav) {
+                    return fav.address !== prop.address || fav.type !== prop.type || fav.price !== prop.price;
+                });
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                renderFavorites();
+            });
+            grid.appendChild(card);
+        });
+        // After rendering favorites, update stats
+        updateDashboardStats();
+    }
+    // Fetch chats from backend for Messages
+    function fetchChats() {
+        fetch('/dashboard_chats')
+            .then(res => res.json())
+            .then(data => {
+                renderChats(data);
+            });
+    }
+    // Fetch appointments from backend
+    function fetchAppointments() {
+        fetch('/dashboard_appointments')
+            .then(res => res.json())
+            .then(data => {
+                renderAppointments(data);
+            });
+    }
+    // Fetch documents from backend
+    function fetchDocuments() {
+        fetch('/dashboard_documents')
+            .then(res => res.json())
+            .then(data => {
+                renderDocuments(data);
+            });
+    }
+    // Fetch and render emails in the dashboard messages section
+    function fetchEmails() {
+        fetch('/dashboard_emails')
+            .then(res => res.json())
+            .then(emails => {
+                const emailList = document.getElementById('email-list');
+                if (!emails.length) {
+                    emailList.innerHTML = '<span style="color:#888;">No emails found.</span>';
+                    return;
+                }
+                emailList.innerHTML = emails.map(email => `
+                    <div style="border-bottom:1px solid #eee; padding:0.7em 0;">
+                        <b>From:</b> ${email.from}<br>
+                        <b>Subject:</b> ${email.subject}<br>
+                        <span style="color:#888; font-size:0.95em;">${email.date}</span>
+                        <div style="margin-top:0.5em;">${email.snippet}</div>
+                    </div>
+                `).join('');
+            })
+            .catch(() => {
+                document.getElementById('email-list').innerHTML = '<span style="color:#c00;">Failed to load emails.</span>';
+            });
+    }
+    // Render chat list (accepts data)
+    function renderChats(chats = []) {
+        const chatList = document.querySelector('.chat-list');
+        chatList.innerHTML = '';
+        chats.forEach(chat => {
+            const div = document.createElement('div');
+            div.className = 'chat-contact';
+            div.innerHTML = `<b>${chat.name}</b><br><span>${chat.last}</span>${chat.unread ? `<span class='unread'>${chat.unread}</span>` : ''}`;
+            chatList.appendChild(div);
+        });
+    }
+    // Render appointments (accepts data)
+    function renderAppointments(appointments = []) {
+        const list = document.querySelector('.appointment-list');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!appointments.length) {
+            list.innerHTML = '<li style="color:#888;">No appointments found.</li>';
+            return;
+        }
+        appointments.forEach(app => {
+            const li = document.createElement('li');
+            li.innerHTML = `<div class='appointment-date'><span class='day'>${app.day}</span><span class='month'>${app.month}</span></div><div class='appointment-details'><h4>${app.title}</h4><p>${app.details}</p></div>`;
+            list.appendChild(li);
+        });
+    }
+    // Render documents (accepts data)
+    function renderDocuments(documents = []) {
+        const grid = document.querySelector('#documents .documents-grid');
+        grid.innerHTML = '';
+        documents.forEach(doc => {
+            const card = document.createElement('div');
+            card.className = 'document-card';
+            card.innerHTML = `<i class="fas fa-file"></i> <span>${doc.name}</span> <span style='font-size:0.9em;color:#888;'>(${doc.type})</span>`;
+            grid.appendChild(card);
+        });
+    }
+    // Chart.js for analytics
+    const ctx = document.getElementById('propertyViewsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Views',
+                data: [120, 190, 300, 500, 200, 300],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0,123,255,0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {legend: {display: false}},
+            scales: {y: {beginAtZero: true}}
+        }
+    });
+    // Update dashboard stats with real data
+    function updateDashboardStats() {
+        // Properties Listed
+        fetch('/dashboard_properties?type=my')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('stat-properties-listed').textContent = data.length;
+            });
+        // Saved Properties (Favorites)
+        let favs = [];
+        try {
+            favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+        } catch (e) { favs = []; }
+        document.getElementById('stat-saved-properties').textContent = favs.length;
+        // New Messages (from demo emails + chats)
+        Promise.all([
+            fetch('/dashboard_emails').then(r => r.json()),
+            fetch('/dashboard_chats').then(r => r.json())
+        ]).then(([emails, chats]) => {
+            // Count unread chats and all emails as new messages (demo logic)
+            let unreadChats = 0;
+            if (Array.isArray(chats)) {
+                unreadChats = chats.reduce((sum, c) => sum + (c.unread || 0), 0);
+            }
+            let emailCount = Array.isArray(emails) ? emails.length : 0;
+            document.getElementById('stat-new-messages').textContent = unreadChats + emailCount;
+        });
+    }
+    // Initial render
+    fetchMyProperties();
+    fetchFavorites();
+    fetchChats();
+    fetchAppointments();
+    fetchDocuments();
+    fetchEmails();
+    // On dashboard load, always render favorites from localStorage
+    renderFavorites();
+    // Call after initial render
+    updateDashboardStats();
+    // Add event to Add New Property button to go to sell.html
+    document.querySelector('.add-property-btn').addEventListener('click', function() {
+        window.location.href = '/sell';
+    });
+    </script>
+</body>
+</html>

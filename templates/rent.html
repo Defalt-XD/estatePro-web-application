@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Properties | EstatePro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rent.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Estate<span>Pro</span></div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('rent') }}" class="active">Rent</a>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        </div>
+        <div class="user-actions">
+            <button class="notifications"><i class="fas fa-bell"></i></button>
+            <button class="messages"><i class="fas fa-envelope"></i></button>
+            <button class="profile"><i class="fas fa-user"></i></button>
+            <button id="open-chatbox-btn" class="chat-agent-btn" style="background: #007bff; color: #fff; border: none; border-radius: 6px; padding: 8px 14px; margin-left: 10px; cursor: pointer;">Chat with Agent</button>
+        </div>
+    </nav>
+    <main>
+        <section class="rent-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <input id="rent-search-location" type="text" placeholder="Location">
+                    <select id="rent-search-type">
+                        <option value="">Property Type</option>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="Town house">Townhouse</option>
+                    </select>
+                    <select id="rent-search-price">
+                        <option value="">Price Range</option>
+                        <option value="0-1000">0 - 1,000</option>
+                        <option value="1000-2000">1,000 - 2,000</option>
+                        <option value="2000-3000">2,000 - 3,000</option>
+                        <option value="3000+">3,000+</option>
+                    </select>
+                    <button class="search-btn" id="rent-search-btn">Search</button>
+                </div>
+            </div>
+            <div class="property-list">
+                <h2>Available Properties</h2>
+                <div class="property-cards" id="rent-property-cards" style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: flex-start;">
+                    <!-- Properties will be rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Chatbox for chatting with agent (hidden by default) -->
+    <div id="chatbox" class="chatbox" style="display:none; position:fixed; bottom:30px; right:30px; width:420px; background:#fff; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.22); z-index:2000; flex-direction:column;">
+        <div class="chatbox-header" style="background:#007bff; color:#fff; padding:16px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center; font-size:1.2em;">
+            <span>Chat with Agent</span>
+            <button id="close-chatbox-btn" style="background:none; border:none; color:#fff; font-size:1.5em; cursor:pointer;">&times;</button>
+        </div>
+        <div class="chatbox-messages" id="chatbox-messages" style="height:320px; overflow-y:auto; background:#f9f9f9; margin:0; padding:16px; font-size:1.1em;"></div>
+        <form id="chatbox-form" autocomplete="off" style="display:flex !important; gap:8px; padding:16px; border-top:1px solid #eee; background:#fafbfc;">
+            <input type="text" id="chatbox-input" name="chatbox-input" autocomplete="off" placeholder="Type your message..." style="flex:1; padding:10px; font-size:1.1em; border-radius:6px; border:1px solid #ccc; background:#fff; color:#222; display:block !important;">
+            <button type="submit" style="background:#007bff; color:#fff; border:none; border-radius:6px; padding:0 22px; font-size:1.1em; cursor:pointer;">Send</button>
+        </form>
+    </div>
+    <script>
+    document.getElementById('rent-search-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const location = document.getElementById('rent-search-location').value.trim();
+        const type = document.getElementById('rent-search-type').value;
+        const price = document.getElementById('rent-search-price').value;
+        fetch(`/search?location=${encodeURIComponent(location)}&type=${encodeURIComponent(type)}&price=${encodeURIComponent(price)}`)
+            .then(res => res.json())
+            .then(data => {
+                const cards = document.getElementById('rent-property-cards');
+                cards.innerHTML = '';
+                if (data.length === 0) {
+                    cards.innerHTML = '<p>No properties found.</p>';
+                } else {
+                    data.forEach(property => {
+                        const div = document.createElement('div');
+                        div.className = 'property-card';
+                        div.style = `background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 20px; width: 320px; display: flex; flex-direction: column; align-items: flex-start; position: relative;`;
+                        let imgSrc = (property.images && property.images.length > 0) ? `/static/${property.images[0]}` : '/static/images/image4.jpeg';
+                        div.innerHTML = `
+                            <img src="${imgSrc}" alt="Property Image" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+                            <h4 style="margin: 0 0 8px 0; color: #2d3a4b;">${property.address}, ${property.city}</h4>
+                            <p style="margin: 0 0 4px 0; color: #555;">Type: <b>${property.type}</b></p>
+                            <p style="margin: 0 0 4px 0; color: #555;">Price: <b>$${property.price}</b></p>
+                            <p style="margin: 0 0 12px 0; color: #555;">Bedrooms: <b>${property.bedrooms}</b>, Bathrooms: <b>${property.bathrooms}</b></p>
+                        `;
+                        cards.appendChild(div);
+                    });
+                }
+            });
+    });
+    // Trigger search on page load to show properties
+    document.getElementById('rent-search-btn').click();
+    </script>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted estate platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>support@estatepro.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/rent.js') }}"></script>
+    <script>
+    // Chatbox logic
+    const chatbox = document.getElementById('chatbox');
+    const openChatboxBtn = document.getElementById('open-chatbox-btn');
+    const closeChatboxBtn = document.getElementById('close-chatbox-btn');
+    const chatboxMessages = document.getElementById('chatbox-messages');
+    const chatboxForm = document.getElementById('chatbox-form');
+    const chatboxInput = document.getElementById('chatbox-input');
+    // Show initial dummy messages
+    function showInitialDummyMessages() {
+        chatboxMessages.innerHTML = '';
+        const dummyMsgs = [
+            {from: 'agent', text: 'Hello! How can I help you with this property?'},
+            {from: 'user', text: 'I am interested in renting a property.'},
+            {from: 'agent', text: 'Great! Do you have any questions or would you like to schedule a visit?'}
+        ];
+        dummyMsgs.forEach(msg => {
+            const div = document.createElement('div');
+            div.textContent = (msg.from === 'user' ? 'You: ' : 'Agent: ') + msg.text;
+            div.className = msg.from === 'user' ? 'chat-msg user-msg' : 'chat-msg agent-msg';
+            div.style.margin = '10px 0';
+            div.style.padding = '8px 14px';
+            div.style.borderRadius = '18px';
+            div.style.maxWidth = '80%';
+            div.style.display = 'inline-block';
+            div.style.clear = 'both';
+            if (msg.from === 'user') {
+                div.style.background = '#e6f0ff';
+                div.style.color = '#333';
+                div.style.float = 'right';
+                div.style.textAlign = 'right';
+            } else {
+                div.style.background = '#007bff';
+                div.style.color = '#fff';
+                div.style.float = 'left';
+                div.style.textAlign = 'left';
+            }
+            chatboxMessages.appendChild(div);
+        });
+        chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+    }
+    openChatboxBtn.onclick = function() {
+        chatbox.style.display = 'flex';
+        showInitialDummyMessages();
+        chatboxInput.value = '';
+        chatboxInput.focus();
+    };
+    closeChatboxBtn.onclick = function() {
+        chatbox.style.display = 'none';
+    };
+    chatboxForm.onsubmit = function(e) {
+        e.preventDefault();
+        const msg = chatboxInput.value.trim();
+        if (msg) {
+            const userDiv = document.createElement('div');
+            userDiv.textContent = 'You: ' + msg;
+            userDiv.className = 'chat-msg user-msg';
+            userDiv.style.margin = '10px 0';
+            userDiv.style.padding = '8px 14px';
+            userDiv.style.borderRadius = '18px';
+            userDiv.style.maxWidth = '80%';
+            userDiv.style.display = 'inline-block';
+            userDiv.style.clear = 'both';
+            userDiv.style.background = '#e6f0ff';
+            userDiv.style.color = '#333';
+            userDiv.style.float = 'right';
+            userDiv.style.textAlign = 'right';
+            chatboxMessages.appendChild(userDiv);
+            chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+            chatboxInput.value = '';
+            setTimeout(() => {
+                const agentDiv = document.createElement('div');
+                agentDiv.textContent = 'Agent: Thank you for your message!';
+                agentDiv.className = 'chat-msg agent-msg';
+                agentDiv.style.margin = '10px 0';
+                agentDiv.style.padding = '8px 14px';
+                agentDiv.style.borderRadius = '18px';
+                agentDiv.style.maxWidth = '80%';
+                agentDiv.style.display = 'inline-block';
+                agentDiv.style.clear = 'both';
+                agentDiv.style.background = '#007bff';
+                agentDiv.style.color = '#fff';
+                agentDiv.style.float = 'left';
+                agentDiv.style.textAlign = 'left';
+                chatboxMessages.appendChild(agentDiv);
+                chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+            }, 1000);
+        }
+    };
+    </script>
+</body>
+</html>
